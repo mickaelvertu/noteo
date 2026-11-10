@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Leaf,
@@ -39,9 +39,7 @@ import {
 } from "firebase/storage";
 import { storage, enableAnalytics } from "./lib/firebase";
 import { Auth } from "./components/Auth";
-const Editor = lazy(() =>
-  import("./components/Editor").then((module) => ({ default: module.Editor })),
-);
+import { Editor } from "./components/Editor";
 import { useWorkspace } from "./useWorkspace";
 import {
   download,
@@ -1122,26 +1120,23 @@ export default function App() {
                           ))}
                       </select>
                     </div>
-                    <Suspense
-                      fallback={
-                        <p className="muted">Ouverture de l’éditeur…</p>
-                      }
-                    >
-                      <Editor
-                        content={draft.contentJson}
-                        resetKey={`${draft.id}:${reset}`}
-                        onChange={(json) => {
-                          const plainText = textFromJson(
-                            JSON.parse(json),
-                          ).slice(0, 200000);
-                          edit({
-                            contentJson: json,
-                            plainText,
-                            excerpt: plainText.slice(0, 160),
-                          });
-                        }}
-                      />
-                    </Suspense>
+
+                    <Editor
+                      content={draft.contentJson}
+                      resetKey={`${draft.id}:${reset}`}
+                      onChange={(json) => {
+                        const plainText = textFromJson(JSON.parse(json)).slice(
+                          0,
+                          200000,
+                        );
+                        edit({
+                          contentJson: json,
+                          plainText,
+                          excerpt: plainText.slice(0, 160),
+                        });
+                      }}
+                    />
+
                     <div className="note-extras">
                       <div className="section-row">
                         <h4>
