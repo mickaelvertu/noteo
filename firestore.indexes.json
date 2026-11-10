@@ -1,0 +1,8 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "notes", "fieldPath": "contentJson", "indexes": [] },
+    { "collectionGroup": "notes", "fieldPath": "plainText", "indexes": [] },
+    { "collectionGroup": "notes", "fieldPath": "excerpt", "indexes": [] }
+  ]
+}

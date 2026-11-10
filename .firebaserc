@@ -1,0 +1,4 @@
+{
+  "projects": { "default": "commandegileada" },
+  "targets": { "commandegileada": { "hosting": { "noteo": ["noteo"] } } }
+}

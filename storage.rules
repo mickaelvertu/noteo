@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  match /noteo/{uid}/{noteId}/{attachmentId}/{filename} {
+   function owner() { return request.auth != null && request.auth.uid == uid; }
+   allow read, delete: if owner();
+   allow create, update: if owner() && request.resource.size > 0 && request.resource.size <= 10 * 1024 * 1024 && request.resource.contentType in ['image/jpeg','image/png','image/webp','image/gif','application/pdf','text/plain'] && firestore.exists(/databases/(default)/documents/noteoUsers/$(uid)/notes/$(noteId));
+  }
+ }
+}
