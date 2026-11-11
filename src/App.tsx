@@ -109,7 +109,6 @@ export default function App() {
     }
   }, [location.pathname]);
   useEffect(() => {
-    setSelected(null);
     setFilter("all");
     setSearch("");
     setUpload(null);
@@ -1122,6 +1121,7 @@ export default function App() {
                     </div>
 
                     <Editor
+                      key={draft.id}
                       content={draft.contentJson}
                       resetKey={`${draft.id}:${reset}`}
                       onChange={(json) => {

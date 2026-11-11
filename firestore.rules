@@ -1,6 +1,10 @@
+// BLOC À FUSIONNER avec les règles actuelles de commandegileada.
+// Ne remplacez pas les autres règles sans les relire. Une règle globale permissive
+// peut annuler la protection ci-dessous : les autorisations sont additives.
 rules_version = '2';
 service cloud.firestore {
- match /databases/{database}/documents {
+  match /databases/{database}/documents {
+
   function owner(uid) { return request.auth != null && request.auth.uid == uid; }
   function bounded(s,n) { return s is string && s.size() <= n; }
   function dates(d) { return d.createdAt is timestamp && d.updatedAt is timestamp; }
@@ -40,5 +44,46 @@ service cloud.firestore {
     allow update: if owner(uid) && valid() && immutableCreated();
    }
   }
- }
+
+    match /declicWorkspaces/{uid} {
+      function owner() { return request.auth != null && request.auth.uid == uid; }
+      function textField(data, key) {
+        return !(key in data) || (data[key] is string && data[key].size() <= 12000);
+      }
+      function validWorkspace() {
+        return request.resource.data.keys().hasOnly(['notes', 'completed', 'projectPlan', 'updatedAt'])
+          && request.resource.data.keys().hasAll(['notes', 'completed', 'projectPlan', 'updatedAt'])
+          && request.resource.data.notes is map
+          && request.resource.data.notes.size() <= 6
+          && request.resource.data.notes.keys().hasOnly(['0','1','2','3','4','5'])
+          && textField(request.resource.data.notes, '0')
+          && textField(request.resource.data.notes, '1')
+          && textField(request.resource.data.notes, '2')
+          && textField(request.resource.data.notes, '3')
+          && textField(request.resource.data.notes, '4')
+          && textField(request.resource.data.notes, '5')
+          && request.resource.data.completed is list
+          && request.resource.data.completed.size() <= 6
+          && request.resource.data.completed.hasOnly([0,1,2,3,4,5])
+          && request.resource.data.projectPlan is map
+          && request.resource.data.projectPlan.size() <= 4
+          && request.resource.data.projectPlan.keys().hasOnly(['Mon client précis','Le problème observé','Ma solution à tester','Mon prochain test'])
+          && textField(request.resource.data.projectPlan, 'Mon client précis')
+          && textField(request.resource.data.projectPlan, 'Le problème observé')
+          && textField(request.resource.data.projectPlan, 'Ma solution à tester')
+          && textField(request.resource.data.projectPlan, 'Mon prochain test')
+          && request.resource.data.updatedAt == request.time;
+      }
+      allow get, delete: if owner();
+      allow list: if false;
+      allow create, update: if owner() && validWorkspace();
+    }
+    // Accès payants : écriture réservée au backend de paiement via Admin SDK.
+    match /declicEntitlements/{uid}/products/{productId} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+    // Aucune règle pour les collections existantes de l'entreprise n'est fournie ici.
+    // Compléter les autres règles à partir de la configuration existante.
+  }
 }

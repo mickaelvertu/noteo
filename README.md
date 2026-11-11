@@ -13,6 +13,12 @@ npm run dev
 
 Open the URL printed by Vite. Choose **Découvrir Noteo sans compte** to explore the explicitly labeled, in-memory demo. Demo data never becomes production data and is discarded on reload or logout. Attachments require a real account.
 
+## Install Noteo
+
+Open https://noteo.web.app and choose **Installer Noteo**. Chrome and Edge can display the native installation prompt. If the browser does not offer that prompt, the button shows instructions for installing from its menu. On iPhone/iPad, use Safari's Share menu and **Sur l’écran d’accueil**; on Safari for Mac, use **Fichier > Ajouter au Dock**.
+
+The manifest provides a standalone window, app icons and an account-aware start URL. Installation does not add offline caching; synchronization still requires Internet access, subject to the existing Firestore cache behavior described below.
+
 ## Firebase setup
 
 The supplied Firebase web configuration points to **commandegileada**. It contains client identifiers, not administrator credentials. No service account is included.
